@@ -109,21 +109,17 @@ class RemittanceRAGPipeline:
             
             # Find data for specific year if mentioned
             if year:
-                for _, _, row_data in retrieved_data:
-                    row_year = row_data.get('Year')
-                    # Handle both string and float year values
-                    if isinstance(row_year, str) and row_year.strip() == str(year):
-                        row_year = int(year)
-                    elif isinstance(row_year, (int, float)):
-                        row_year = int(float(row_year))
-                    
-                    if row_year == year:
+                # First try: Direct search through all data rather than just retrieved data
+                for idx, row in self.df.iterrows():
+                    row_year = row.get('Year')
+                    if isinstance(row_year, (int, float)) and int(float(row_year)) == year:
                         answer = f"For year {year}:\n"
-                        # Add all values from the row
-                        for col, val in row_data.items():
+                        # Add all values from the row as a dictionary
+                        row_dict = row.to_dict()
+                        for col, val in row_dict.items():
                             if col != 'Year':  # Skip year as we already mentioned it
                                 answer += f"- {col}: {val}\n"
-                        break
+                        return answer
             
             # If no specific year or couldn't find match, return most relevant row
             if not answer and retrieved_data:

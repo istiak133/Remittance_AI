@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Remittance Query System - Wrapper Script
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Path to the Python virtual environment
+VENV_PATH="$SCRIPT_DIR/venv/bin/python"
+
+# Check if virtual environment exists
+if [ ! -f "$VENV_PATH" ]; then
+  echo "Error: Python virtual environment not found at $VENV_PATH"
+  echo "Please run: python -m venv venv && pip install -r requirements.txt"
+  exit 1
+fi
+
+# Execute the Python script with all arguments passed to this script
+"$VENV_PATH" "$SCRIPT_DIR/ask_remittance.py" "$@"
